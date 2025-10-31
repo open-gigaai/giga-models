@@ -19,22 +19,28 @@ Internal benchmarks confirm that this PyTorch reproduction achieves significant 
 
 ### Training time comparison
 
-- Hardware: 8× NVIDIA H20 GPUs (96GB VRAM per unit).
-- Protocol: All benchmarks utilize a constant global batch size of 256 (32 samples per GPU) and are trained for 50,000 steps.
-- Dataloader: 16 workers per GPU.
-- Optimization: FSDP2 for model and optimizer sharding; Mixed-precision training (FP32 weights/gradients, BF16 most computations/activations); EMA weights; TorchDynamo to optimize training; Activation checkpointing applied to blocks.
+- **Hardware**: 8× NVIDIA H20 GPUs (96GB VRAM per unit).
+- **Protocol**: All benchmarks utilize a constant global batch size of 256 (32 samples per GPU) and are trained for 50,000 steps.
+- **Dataloader**: 16 workers per GPU.
+- **Optimization**: 
+  - FSDP2 for model and optimizer sharding
+  - Mixed-precision training (FP32 weights/gradients, BF16 most computations/activations)
+  - EMA weights to improve generalization ability and stability
+  - TorchDynamo to optimize training
+  - Activation checkpointing applied to blocks
 
 | Model         | OpenPI-JAX-Pi0 | OpenPI-JAX-Pi0.5 | Ours-Torch-Pi0 | Ours-Torch-Pi0.5 |
 | ------------- |----------------|------------------|----------------|------------------|
 | Training time | 58 h           | 67 h             | 50 h           | 61 h             |
 
-Ours-Torch-Pi0.5 model supports a maximum training batch size of 192, significantly surpassing the official implementation's cap of 32.
+* Ours-Torch-Pi0.5 model supports a **maximum training batch size of 192**, significantly surpassing the official implementation's cap of 32.
+* Ours-Torch-Pi0.5 model supports full training on GPUs with **40GB VRAM or less**, a significant reduction from the official version's larger memory requirements.
 
 ### Inference time comparison
 
-- Hardware: 1× NVIDIA H20 GPUs (96GB VRAM per unit).
-- Protocol: Data transformations without image resizing; Warmup for 1–2 steps to compile kernels.
-- Optimization: Improve inference throughput and latency with SDPA attention and TorchDynamo (using max-autotune mode and fullgraph).
+- **Hardware**: 1× NVIDIA H20 GPUs (96GB VRAM per unit).
+- **Protocol**: Data transformations without image resizing; Warmup for 1–2 steps to compile kernels.
+- **Optimization**: Improve inference throughput and latency with SDPA attention and TorchDynamo (using max-autotune mode and fullgraph).
 
 | Model          | OpenPI-JAX-Pi0 | OpenPI-JAX-Pi0.5 | Ours-Torch-Pi0 | Ours-Torch-Pi0.5 |
 | -------------- |----------------|------------------|----------------|------------------|
@@ -42,7 +48,7 @@ Ours-Torch-Pi0.5 model supports a maximum training batch size of 192, significan
 
 ## ⚡ Installation
 
-We recommend a fresh Conda environment.
+We recommend a fresh conda environment.
 
 ```bash
 conda create -n giga_pi0 python=3.11.10 -y
@@ -94,7 +100,7 @@ Convert to PyTorch (Pi0):
 
 ```bash
 python scripts/convert_jax_model_to_pytorch.py \
-  --checkpoint-dir /path/to/openpi-assets/checkpoints/pi0_base/params \
+  --checkpoint-dir /path/to/pi0_base/params \
   --precision float32 \
   --tokenizer-id google/paligemma-3b-pt-224 \
   --output-path /path/to/torch_pi0_base \
@@ -104,7 +110,7 @@ Convert to PyTorch (Pi0.5):
 
 ```bash
 python scripts/convert_jax_model_to_pytorch.py \
-  --checkpoint-dir /path/to/openpi-assets/checkpoints/pi05_base/params \
+  --checkpoint-dir /path/to/pi05_base/params \
   --precision float32 \
   --tokenizer-id google/paligemma-3b-pt-224 \
   --output-path /path/to/torch_pi05_base \
@@ -136,7 +142,7 @@ Run Pi0/Pi0.5 inference on a LeRobot dataset and optionally visualize prediction
 ```bash
 python scripts/inference.py \
   --model-path /path/to/torch_pi0_base \
-  --tokenizer-model-path /path/to/models--google--paligemma-3b-pt-224 \
+  --tokenizer-model-path google/paligemma-3b-pt-224 \
   --data-path /path/to/lerobot_dataset \
   --norm-stats-path /path/to/norm_stats.json \
   --vis-output-path /tmp/pi0_vis \
@@ -153,7 +159,7 @@ python scripts/inference.py \
   ```bash
   python scripts/inference_server.py \
     --model-path /path/to/torch_pi0_or_pi05_base \
-    --tokenizer-model-path /path/to/models--google--paligemma-3b-pt-224 \
+    --tokenizer-model-path google/paligemma-3b-pt-224 \
     --norm-stats-path /path/to/norm_stats.json \
     --original-action-dim 14
   ```
