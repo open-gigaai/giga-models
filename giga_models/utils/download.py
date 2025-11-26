@@ -114,6 +114,7 @@ def download_from_huggingface(
     root_dir: Optional[str] = None,
     local_dir: Optional[str] = None,
     filenames: Optional[Sequence[str] | str] = None,
+    folders: Optional[Sequence[str] | str] = None,
     repo_type: Optional[str] = None,
     force: bool = False,
     **kwargs,
@@ -125,6 +126,7 @@ def download_from_huggingface(
         root_dir: Root directory for downloads; uses HF cache env vars if None.
         local_dir: Specific local directory path; computed from root_dir and repo_id if None.
         filenames: Specific file(s) to download; downloads entire repo if None.
+        folders: Specific folder(s) to download; downloads entire repo if None.
         repo_type: Type of repo ("model", "dataset", or "space"); defaults to "model".
         force: If True, re-download even if files exist locally.
         **kwargs: Additional arguments passed to hf_hub_download or snapshot_download.
@@ -147,26 +149,48 @@ def download_from_huggingface(
         local_dir = os.path.join(root_dir, repo_folder_name(repo_id=repo_id, repo_type=repo_type))
     cache_dir = os.path.join(local_dir, '.cache')
     if filenames is not None:
-        if isinstance(filenames, str):
-            filenames = [filenames]
-        assert isinstance(filenames, (list, tuple)) and len(filenames) >= 1
-    if filenames is not None and len(filenames) == 1:
-        local_path = os.path.join(local_dir, filenames[0])
-        if os.path.exists(local_path):
-            if force:
-                os.remove(local_path)
-            else:
-                return local_path
-        print(f'download from {repo_id} to {local_path}')
-        local_path = wrap_call(hf_hub_download)(
-            repo_id=repo_id,
-            filename=filenames[0],
-            cache_dir=cache_dir,
-            local_dir=local_dir,
-            **kwargs,
-        )
+        filenames = [filenames] if isinstance(filenames, str) else filenames
+        local_paths = []
+        for filename in filenames:
+            local_path = os.path.join(local_dir, filename)
+            local_paths.append(local_path)
+            if os.path.exists(local_path):
+                if force:
+                    os.remove(local_path)
+                else:
+                    continue
+            print(f'download from {repo_id} to {local_path}')
+            wrap_call(hf_hub_download)(
+                repo_id=repo_id,
+                filename=filenames[0],
+                cache_dir=cache_dir,
+                local_dir=local_dir,
+                **kwargs,
+            )
+        local_path = local_paths[0] if len(local_paths) == 1 else local_paths
+    elif folders is not None:
+        folders = [folders] if isinstance(folders, str) else folders
+        local_paths = []
+        for folder in folders:
+            local_path = os.path.join(local_dir, folder)
+            local_paths.append(local_path)
+            if os.path.exists(local_path):
+                if force:
+                    os.remove(local_path)
+                else:
+                    continue
+            print(f'download from {repo_id} to {local_path}')
+            wrap_call(snapshot_download)(
+                repo_id=repo_id,
+                cache_dir=cache_dir,
+                local_dir=local_dir,
+                allow_patterns=f'{folder}/*',
+                **kwargs,
+            )
+        local_path = local_paths[0] if len(local_paths) == 1 else local_paths
     else:
-        if os.path.exists(local_dir):
+        download_full = 'allow_patterns' not in kwargs and 'ignore_patterns' not in kwargs
+        if os.path.exists(local_dir) and download_full:
             if force:
                 shutil.rmtree(local_dir)
             else:
@@ -174,7 +198,6 @@ def download_from_huggingface(
         print(f'download from {repo_id} to {local_dir}')
         local_path = wrap_call(snapshot_download)(
             repo_id=repo_id,
-            allow_patterns=filenames,
             cache_dir=cache_dir,
             local_dir=local_dir,
             **kwargs,
