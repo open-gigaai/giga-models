@@ -12,6 +12,7 @@ A Comprehensive Repository for Multi-modal, Generative, and Perceptual Models
 
 ## 🔥 Latest News
 
+- **\[2025.11.26\]** 🎉 We released **[GigaWorld-0](https://github.com/open-gigaai/giga-world-0)**, a unified world model framework designed explicitly as a data engine to advance embodied AI.
 - **\[2025.10.29\]** 😊 We provided a clean [PyTorch reproduction](./projects/vla/pi0) of [Pi0 and Pi0.5](https://github.com/Physical-Intelligence/openpi). It supports end-to-end training and inference with better performance and lightweight deployment.
 - **\[2025.10.29\]** 🎉 We released **GigaModels**.
 
@@ -93,12 +94,18 @@ More details on using GigaModels can be found in the [`projects`](./projects) fo
     <td>Diffusion</td>
     <td>
       <ul>
-        <li>Coming Soon</li>
+        <li><a href="giga_models/pipelines/diffusion/giga_world_0/pipeline_giga_world_0.py">GigaWorld-0</a></li>
       </ul>
     </td>
     <td>
+      <ul>
+        <li><a href="https://github.com/open-gigaai/giga-world-0/blob/main/scripts/inference.py">GigaWorld-0</a></li>
+      </ul>
     </td>
     <td>
+      <ul>
+        <li><a href="https://github.com/open-gigaai/giga-world-0/blob/main/configs/giga_world_0_video.py">GigaWorld-0</a></li>
+      </ul>
     </td>
   </tr>
   <tr>

@@ -11,6 +11,7 @@ imageio-ffmpeg
 moviepy
 opencv-python
 opencv-python-headless
+peft
 rtmlib
 segment-anything
 torch
