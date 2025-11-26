@@ -58,9 +58,12 @@ def make_att_2d_masks(pad_masks: torch.Tensor, att_masks: torch.Tensor) -> torch
           block can attend all previous blocks and all tokens on the same block.
 
     Args:
-      input_mask: bool[B, N] true if its part of the input, false if padding.
-      mask_ar: int32[B, N] mask that's 1 where previous tokens cannot depend on
-        it and 0 where it shares the same attention mask as the previous token.
+      pad_masks: bool[B, N] indicating valid (true) vs. padding (false) tokens.
+      att_masks: int[B, N] defining attention type. A `1` at a position
+                 indicates the start of a new causal block.
+
+    Returns:
+        A 2D boolean attention mask of shape (B, N, N).
     """
     if att_masks.ndim != 2:
         raise ValueError(att_masks.ndim)
@@ -109,7 +112,6 @@ class PI0Policy(ModelMixin, ConfigMixin):
         num_steps: int = 10,
         use_cache: bool = True,
         pi05_enabled: bool = False,
-        **kwargs,
     ):
         super().__init__()
 

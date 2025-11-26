@@ -312,21 +312,10 @@ class GemmaAttentionWithExpert(nn.Module):
                 value_states = torch.cat([past_key_values[self.layer_idx]['value_states'], value_states], dim=1)
 
         # Eager attention
-        num_att_heads = self.paligemma_num_attention_heads  # Assume same for both
-        num_key_value_heads = self.paligemma_num_key_value_heads
-        num_key_value_groups = num_att_heads // num_key_value_heads
+        num_att_heads = self.paligemma_num_attention_heads
         head_dim = self.paligemma_head_dim
         batch_size = query_states.shape[0]
-        sequence_length = key_states.shape[1]
-
-        key_states_rep = key_states[:, :, :, None, :].expand(batch_size, sequence_length, num_key_value_heads, num_key_value_groups, head_dim)
-        key_states_rep = key_states_rep.reshape(batch_size, sequence_length, num_key_value_heads * num_key_value_groups, head_dim)
-
-        value_states_rep = value_states[:, :, :, None, :].expand(batch_size, sequence_length, num_key_value_heads, num_key_value_groups, head_dim)
-        value_states_rep = value_states_rep.reshape(batch_size, sequence_length, num_key_value_heads * num_key_value_groups, head_dim)
-
-        query_states, key_states_rep, value_states_rep = map(lambda x: x.to(torch.float32), [query_states, key_states_rep, value_states_rep])
-
+        query_states, key_states_rep, value_states_rep = map(lambda x: x.to(torch.float32), [query_states, key_states, value_states])
         query_states = query_states.transpose(1, 2)
         key_states_rep = key_states_rep.transpose(1, 2)
         value_states_rep = value_states_rep.transpose(1, 2)
@@ -337,7 +326,6 @@ class GemmaAttentionWithExpert(nn.Module):
             attn_mask=attention_mask[:, None, :, :],
             is_causal=False,
         )
-
         att_output = att_output.permute(0, 2, 1, 3)
         att_output = att_output.reshape(batch_size, -1, num_att_heads * head_dim)
 
@@ -540,7 +528,6 @@ class PaliGemmaWithExpertModel(nn.Module):
         paligemma_hidden_size: int = 2048,
         paligemma_num_attention_heads: int = 8,
         paligemma_num_key_value_heads: int = 1,
-        paligemma_head_dim: int = 256,
         paligemma_attention_bias: bool = False,
         paligemma_intermediate_size: int = 16384,
         paligemma_hidden_act: str = 'gelu_pytorch_tanh',
@@ -586,7 +573,7 @@ class PaliGemmaWithExpertModel(nn.Module):
                     paligemma_attention_bias=paligemma_attention_bias,  # gemma default
                     paligemma_intermediate_size=paligemma_intermediate_size,
                     paligemma_hidden_act=paligemma_hidden_act,
-                    paligemma_rms_norm_eps=1e-6,  # gemma default
+                    paligemma_rms_norm_eps=paligemma_rms_norm_eps,  # gemma default
                     expert_hidden_size=expert_hidden_size,
                     expert_num_attention_heads=expert_num_attention_heads,
                     expert_num_key_value_heads=expert_num_key_value_heads,

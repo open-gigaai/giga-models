@@ -129,7 +129,7 @@ def slice_and_remap_state_dict(state_dict, paligemma_config, gemma_config, pi05_
         state_dict[f'layers.{i}.self_attn.v_proj.0.weight'] = v_proj_weight_reshaped
 
         o_proj_weight_reshaped = llm_attention_attn_vec_einsum[i].transpose(2, 0, 1).reshape(
-            paligemma_config.text_config.num_attention_heads * paligemma_config.text_config.head_dim, paligemma_config.text_config.hidden_size
+            paligemma_config.text_config.hidden_size, paligemma_config.text_config.num_attention_heads * paligemma_config.text_config.head_dim
         )
         state_dict[f'layers.{i}.self_attn.o_proj.0.weight'] = o_proj_weight_reshaped
 
