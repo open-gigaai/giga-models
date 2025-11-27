@@ -12,6 +12,7 @@ A Comprehensive Repository for Multi-modal, Generative, and Perceptual Models
 
 ## 🔥 Latest News
 
+- **\[2025.11.27\]** 🎉 We released **[GigaBrain-0](https://github.com/open-gigaai/giga-brain-0)**, a novel VLA foundation model empowered by world model-generated data.
 - **\[2025.11.26\]** 🎉 We released **[GigaWorld-0](https://github.com/open-gigaai/giga-world-0)**, a unified world model framework designed explicitly as a data engine to advance embodied AI.
 - **\[2025.10.29\]** 😊 We provided a clean [PyTorch reproduction](./projects/vla/pi0) of [Pi0 and Pi0.5](https://github.com/Physical-Intelligence/openpi). It supports end-to-end training and inference with better performance and lightweight deployment.
 - **\[2025.10.29\]** 🎉 We released **GigaModels**.
@@ -72,18 +73,21 @@ More details on using GigaModels can be found in the [`projects`](./projects) fo
     <td>VLA</td>
     <td>
       <ul>
+        <li><a href="giga_models/pipelines/vla/giga_brain_0/pipeline_giga_brain_0.py">GigaBrain-0</a></li>
         <li><a href="giga_models/pipelines/vla/pi0/pipeline_pi0.py">Pi0</a></li>
         <li><a href="giga_models/pipelines/vla/pi0/pipeline_pi0.py">Pi0.5</a></li>
       </ul>
     </td>
     <td>
       <ul>
+        <li><a href="https://github.com/open-gigaai/giga-brain-0/blob/main/scripts/inference.py">GigaBrain-0</a></li>
         <li><a href="projects/vla/pi0/scripts/inference.py">Pi0</a></li>
         <li><a href="projects/vla/pi0/scripts/inference.py">Pi0.5</a></li>
       </ul>
     </td>
     <td>
       <ul>
+        <li><a href="https://github.com/open-gigaai/giga-brain-0/blob/main/configs/giga_brain_0_from_scratch.py">GigaBrain-0</a></li>
         <li><a href="projects/vla/pi0/configs/pi0.py">Pi0</a></li>
         <li><a href="projects/vla/pi0/configs/pi05.py">Pi0.5</a></li>
       </ul>
