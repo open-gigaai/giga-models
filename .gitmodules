@@ -1,3 +1,6 @@
 [submodule "projects/diffusion/giga-world-0"]
 	path = projects/diffusion/giga-world-0
 	url = https://github.com/open-gigaai/giga-world-0
+[submodule "projects/vla/giga-brain-0"]
+	path = projects/vla/giga-brain-0
+	url = https://github.com/open-gigaai/giga-brain-0
