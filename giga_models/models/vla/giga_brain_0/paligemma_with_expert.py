@@ -311,12 +311,19 @@ class GemmaAttentionWithExpert(nn.Module):
                     past_key_values[self.layer_idx] = {'key_states': key_states, 'value_states': value_states}
 
         num_att_heads = self.paligemma_num_attention_heads  # Assume same for both
+        num_key_value_heads = self.paligemma_num_key_value_heads
         head_dim = self.paligemma_head_dim
         batch_size = query_states.shape[0]
 
         query_states = query_states.transpose(1, 2)
         key_states = key_states.transpose(1, 2)
         value_states = value_states.transpose(1, 2)
+
+        if num_key_value_heads != num_att_heads:
+            # key_states: (B, num_kv_heads, L, D) -> (B, num_att_heads, L, D)
+            key_states = torch.repeat_interleave(key_states, num_att_heads // num_key_value_heads, dim=1)
+            value_states = torch.repeat_interleave(value_states, num_att_heads // num_key_value_heads, dim=1)
+
         att_output = F.scaled_dot_product_attention(
             query_states,
             key_states,

@@ -248,6 +248,8 @@ class GemmaAttentionWithExpert(nn.Module):
         self.expert_head_dim = expert_head_dim
 
         assert paligemma_head_dim == expert_head_dim
+        assert paligemma_num_attention_heads == expert_num_attention_heads
+        assert paligemma_num_key_value_heads == expert_num_key_value_heads
         self.rope_embedding = RoPEEmbedding(dim=paligemma_head_dim, max_wavelength=rope_max_wavelength, max_seq_len=rope_max_seq_len)
 
     def forward(
@@ -311,18 +313,23 @@ class GemmaAttentionWithExpert(nn.Module):
                 key_states = torch.cat([past_key_values[self.layer_idx]['key_states'], key_states], dim=1)
                 value_states = torch.cat([past_key_values[self.layer_idx]['value_states'], value_states], dim=1)
 
-        # Eager attention
-        num_att_heads = self.paligemma_num_attention_heads
+        num_att_heads = self.paligemma_num_attention_heads  # Assume same for both
+        num_key_value_heads = self.paligemma_num_key_value_heads
         head_dim = self.paligemma_head_dim
         batch_size = query_states.shape[0]
-        query_states, key_states_rep, value_states_rep = map(lambda x: x.to(torch.float32), [query_states, key_states, value_states])
         query_states = query_states.transpose(1, 2)
-        key_states_rep = key_states_rep.transpose(1, 2)
-        value_states_rep = value_states_rep.transpose(1, 2)
+        key_states = key_states.transpose(1, 2)
+        value_states = value_states.transpose(1, 2)
+
+        if num_key_value_heads != num_att_heads:
+            # key_states: (B, num_kv_heads, L, D) -> (B, num_att_heads, L, D)
+            key_states = torch.repeat_interleave(key_states, num_att_heads // num_key_value_heads, dim=1)
+            value_states = torch.repeat_interleave(value_states, num_att_heads // num_key_value_heads, dim=1)
+
         att_output = F.scaled_dot_product_attention(
             query_states,
-            key_states_rep,
-            value_states_rep,
+            key_states,
+            value_states,
             attn_mask=attention_mask[:, None, :, :],
             is_causal=False,
         )
