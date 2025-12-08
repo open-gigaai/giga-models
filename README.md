@@ -12,6 +12,7 @@ A Comprehensive Repository for Multi-modal, Generative, and Perceptual Models
 
 ## 🔥 Latest News
 
+- **\[2025.12.08\]** 😊 We provide a refactored version of the [Cosmos-Predict2.5 and Cosmos-Transfer2.5](./projects/diffusion/cosmos-2.5) training and inference code, which makes the code more concise and readable and easier to use.
 - **\[2025.11.27\]** 🎉 We released **[GigaBrain-0](https://github.com/open-gigaai/giga-brain-0)**, a novel VLA foundation model empowered by world model-generated data.
 - **\[2025.11.26\]** 🎉 We released **[GigaWorld-0](https://github.com/open-gigaai/giga-world-0)**, a unified world model framework designed explicitly as a data engine to advance embodied AI.
 - **\[2025.10.29\]** 😊 We provided a clean [PyTorch reproduction](./projects/vla/pi0) of [Pi0 and Pi0.5](https://github.com/Physical-Intelligence/openpi). It supports end-to-end training and inference with better performance and lightweight deployment.
@@ -99,16 +100,22 @@ More details on using GigaModels can be found in the [`projects`](./projects) fo
     <td>
       <ul>
         <li><a href="giga_models/pipelines/diffusion/giga_world_0/pipeline_giga_world_0.py">GigaWorld-0</a></li>
+        <li><a href="giga_models/pipelines/diffusion/cosmos2_5/pipeline_cosmos2_5.py">Cosmos-Predict2.5</a></li>
+        <li><a href="giga_models/pipelines/diffusion/cosmos2_5/pipeline_cosmos2_5.py">Cosmos-Transfer2.5</a></li>
       </ul>
     </td>
     <td>
       <ul>
         <li><a href="https://github.com/open-gigaai/giga-world-0/blob/main/scripts/inference.py">GigaWorld-0</a></li>
+        <li><a href="projects/diffusion/cosmos-2.5/scripts/inference.py">Cosmos-Predict2.5</a></li>
+        <li><a href="projects/diffusion/cosmos-2.5/scripts/inference_transfer.py">Cosmos-Transfer2.5</a></li>
       </ul>
     </td>
     <td>
       <ul>
         <li><a href="https://github.com/open-gigaai/giga-world-0/blob/main/configs/giga_world_0_video.py">GigaWorld-0</a></li>
+        <li><a href="projects/diffusion/cosmos-2.5/configs/cosmos_predict25.py">Cosmos-Predict2.5</a></li>
+        <li><a href="projects/diffusion/cosmos-2.5/configs/cosmos_transfer25.py">Cosmos-Transfer2.5</a></li>
       </ul>
     </td>
   </tr>
@@ -119,12 +126,14 @@ More details on using GigaModels can be found in the [`projects`](./projects) fo
       <ul>
         <li><a href="giga_models/pipelines/vision/depth_estimation/pipeline_depth_anything.py">Depth Anything</a></li>
         <li><a href="giga_models/pipelines/vision/depth_estimation/pipeline_dpt.py">DPT</a></li>
+        <li><a href="giga_models/pipelines/vision/depth_estimation/pipeline_video_depth_anything.py">Video Depth Anything</a></li>
       </ul>
     </td>
     <td>
       <ul>
         <li><a href="projects/vision/depth_estimation/inference_depth_estimation.py">Depth Anything</a></li>
         <li><a href="projects/vision/depth_estimation/inference_depth_estimation.py">DPT</a></li>
+        <li><a href="projects/vision/depth_estimation/inference_video_depth_estimation.py">Video Depth Anything</a></li>
       </ul>
     </td>
     <td>
